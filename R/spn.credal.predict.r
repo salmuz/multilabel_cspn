@@ -29,7 +29,7 @@ spn.credal.predict <- function(spn,
       ) %dopar% {
         if (i %% 20 == 1)
           cat(paste(Sys.time(), ":::Predict", i - 1, "\n"))
-        source("spn.predict.r")
+        source("spn.maximality.r")
         spn.predict(
           spn = spn,
           data = as.numeric(data[i,]),
