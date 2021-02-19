@@ -37,10 +37,6 @@ spn.predict <- function(spn,
     precise.marginal <-
       c(precise.marginal, spn.value.max(spn, cfg)$res)
   }
-  ###########################################################
-  # @salmuz verify if lower.marginal(x) > upper.marginal(x)
-  # @salmuz (maximality)
-  ###########################################################
   lower.cond <- c(-Inf, -Inf)
   lower.cond[1] <- exp(lower.marginal[1] -
                          logsumexp(c(lower.marginal[1],
@@ -50,7 +46,7 @@ spn.predict <- function(spn,
                                      upper.marginal[1])))
   
   # class 1 is (0) and class 2 is (1)
-  credal.class <- (-1)
+  credal.class <- -1
   if (lower.cond[1] > 0.5) {
     credal.class <- 1
   } else{
@@ -60,6 +56,26 @@ spn.predict <- function(spn,
       credal.class <- 3
     }
   }
+  ###########################################################
+  # @salmuz verify if lower.marginal(x) > upper.marginal(x)
+  # @salmuz (maximality, paper of Correia & D. Campos)
+  # credal.class.marg <- -1
+  # if (lower.marginal[1] > upper.marginal[2]) {
+  #   credal.class.marg <- 1
+  # }else{
+  #   if(lower.marginal[2] > upper.marginal[1]){
+  #     credal.class.marg <- 2
+  #   }else{
+  #     credal.class.marg <- 3
+  #   }
+  # }
+  # if(credal.class.marg != credal.class){
+  #   stop(paste0("Error not good decision", credal.class.marg, 
+  #               credal.class, sep=":::"))
+  # }else{
+  #   cat(paste("Good news equals:::", credal.class.marg, ":::",
+  #             credal.class, "\n"))
+  # }
   ###########################################################
   evi.marginal.log <- logsumexp(precise.marginal)
   res <- c(data[classcol],

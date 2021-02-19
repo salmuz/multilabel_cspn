@@ -18,8 +18,9 @@ getDummies <- function(data) {
 }
 ################################################################
 # init parameters
-VERB <- FALSE
+VERB <- TRUE
 NCORES <- 1
+NUM_INTERVALS <- 5
 # init_data
 dataset <- "emotions"
 nb.labels <- 6
@@ -28,7 +29,7 @@ ROOT <- paste0("/Users/salmuz/Downloads/", dataset, "/")
 out_results <- "~/Downloads/mydata.csv"
 
 # resampling parameters
-epsilons <- seq(0.1, 0.9, 0.1)
+epsilons <- seq(0.01, 0.1, 0.02)
 pcts <- seq(10, 90, 10)
 
 # loops
@@ -53,7 +54,8 @@ for (resampling in 1:max.resampling) {
         nb.labels = nb.labels,
         eps = eps,
         verb = VERB,
-        ncores = NCORES
+        ncores = NCORES,
+        num.intervals = NUM_INTERVALS
       )
       rs <- cbind(pct, eps, resampling, rs)
       write.table(
