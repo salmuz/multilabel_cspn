@@ -109,3 +109,62 @@ getDummies <- function(data) {
     }
     return(data)
 }
+
+discretization_eqfreq <- function(dataset, numint, 
+                                  ncols = ncol(dataset)) {
+    numitem <- nrow(dataset)
+    for (i in 1:ncols) {
+        floatdata <- as.numeric(dataset[, i])
+        sort.idx <- sort(floatdata, index.return = TRUE)
+        dataset <- dataset[sort.idx$ix, ]
+        floatdata <- floatdata[sort.idx$ix]
+        cutpoint <- c()
+        newname <- c()
+        for (j in 1:numint) {
+            .temp <- as.integer(j * (numitem / (numint))) - 1
+            cutpoint <- c(cutpoint, dataset[.temp, i])
+        }
+        for (j in 1:numint) {
+            if (j == 1) {
+                string <- toString(cutpoint[j])
+                string <- substring(string, 1, min(nchar(string), 7))
+                newname <- c(newname, paste0('<=', string))
+            } else{
+                if (j == numint) {
+                    string <- toString(cutpoint[j - 1])
+                    string <- substring(string, 1, min(nchar(string), 7))
+                    newname <- c(newname, paste0('>', string))
+                } else{
+                    string1 <- toString(cutpoint[j - 1])
+                    string2 <- toString(cutpoint[j])
+                    string1 <- substring(string1, 1, min(nchar(string1), 7))
+                    string2 <- substring(string2, 1, min(nchar(string2), 7))
+                    newname <-
+                        c(newname, paste0('(', string1, ';', string2, ']'))
+                }
+            }
+        }
+        for (j in 1:numint) {
+            if (j == 1) {
+                dataset[(floatdata <= as.numeric(cutpoint[j])), i] <- newname[j]
+            } else{
+                if (j == numint) {
+                    dataset[(floatdata > as.numeric(cutpoint[j - 1])), i] <- newname[j]
+                } else{
+                    dataset[(floatdata > as.numeric(cutpoint[j - 1])) &
+                                (floatdata <= as.numeric(cutpoint[j])), i] <-
+                        newname[j]
+                }
+            }
+        }
+    }
+    return(dataset)
+}
+
+
+getDummies <- function(data) {
+    for (var in colnames(data)) {
+        data[[var]] <- as.integer(as.factor(data[[var]]))
+    }
+    return(data)
+}
