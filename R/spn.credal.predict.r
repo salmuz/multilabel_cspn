@@ -9,6 +9,7 @@ spn.credal.predict <- function(spn,
                                classcol = ncol(data),
                                eps = 0.0,
                                verb = FALSE,
+                               idm_version = FALSE,
                                ncores = detectCores() - 1) {
   nclass <- spn$ncat[classcol]
   if (nclass < 2)
@@ -35,7 +36,8 @@ spn.credal.predict <- function(spn,
           data = as.numeric(data[i,]),
           classcol = classcol,
           verb = verb,
-          eps = eps
+          eps = eps,
+          idm_version = idm_version
         )
       }
     stopCluster(cl)
@@ -49,7 +51,8 @@ spn.credal.predict <- function(spn,
           data = as.numeric(data[i,]),
           classcol = classcol,
           verb = verb,
-          eps = eps
+          eps = eps,
+          idm_version = idm_version
         )
       )
     }

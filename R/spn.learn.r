@@ -1,6 +1,6 @@
 ## Copyright (c) 2019 C. P. de Campos (cassiopc@acm.org). All rights reserved.
 setRefClass("node",
-            fields=list(children="list", scope="vector", weight="vector", n="numeric", type="numeric", value="vector", len="numeric", size="numeric",id="numeric", memory="environment")
+            fields=list(children="list", scope="vector", weight="vector", n="numeric", type="numeric", value="vector", len="numeric", size="numeric",id="numeric", memory="environment", total_weight="numeric")
             )
 setRefClass("spn",
             fields=list(root="node",ncat="vector",maxv="vector",minv="vector")
@@ -187,7 +187,7 @@ spn.learn.aux <- function(data, ncat, scope, thr, nclusters, verb,
             ## }
             ##### if multiple values for the variable are still present in the data, then use a sum node with indicator functions as children
             ncategory <- ncat[scope]
-            sumnode <- new("node",children=list(), scope=scope, weight=rep_len(0,ncategory), n=m, type=4, len=ncategory, size=ncategory+1,id=round(10000000*runif(1))) #'sum'
+            sumnode <- new("node",children=list(), scope=scope, weight=rep_len(0,ncategory), n=m, type=4, len=ncategory, size=ncategory+1,id=round(10000000*runif(1)), total_weight=0) #'sum'
 
             for(i in 1:ncategory) {
                 members <- which(data[,scope]==i)
@@ -198,6 +198,7 @@ spn.learn.aux <- function(data, ncat, scope, thr, nclusters, verb,
             for(i in 1:ncategory) {
                 sumnode$weight[i] <- sumnode$weight[i]/ss
             }
+            sumnode$total_weight <- ss
             return(sumnode)
         } else {
             if(verb) cat(paste(Sys.time(),":: Creating new Gaussian leaf\n"))
@@ -206,7 +207,7 @@ spn.learn.aux <- function(data, ncat, scope, thr, nclusters, verb,
     }
 
     ## we were not able to cut vertically, so we run clustering of the data (each row is a point), and then we use the result of clustering to create the children of a sum node
-    sumnode <- new("node",children=list(), scope=scope, weight=vector(), n=m, len=0, type=4, size=1,id=round(10000000*runif(1))) #'sum'
+    sumnode <- new("node",children=list(), scope=scope, weight=vector(), n=m, len=0, type=4, size=1,id=round(10000000*runif(1)), total_weight=0) #'sum'
     do.unif <- FALSE
     ##do.empty <- FALSE
     nclusters.t <- nclusters
@@ -261,5 +262,6 @@ spn.learn.aux <- function(data, ncat, scope, thr, nclusters, verb,
         sumnode$children[[i]] <- children[[o[i]]]
         sumnode$weight[i] <- weights[o[i]]/sum(weights)
     }
+    sumnode$total_weight <- sum(weights)
     return(sumnode)
 }

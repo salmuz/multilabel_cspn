@@ -9,6 +9,7 @@ spn.multilabel <- function(data_train,
                            nb.labels,
                            eps = 0.0,
                            verb = FALSE,
+                           idm_version = FALSE,
                            num.intervals = NULL,
                            ncores = 1,
                            ncore.learn = 1) {
@@ -33,7 +34,7 @@ spn.multilabel <- function(data_train,
       foreach(
         i = 1:nb.labels,
         .packages = c("cluster"),
-        .combine = rbind
+        .combine = cbind
       ) %dopar% {
         cat(paste(Sys.time(), ":::Label", .labels.train[i], "\n"))
         source("spn.binaryrelevant.r")
@@ -45,6 +46,7 @@ spn.multilabel <- function(data_train,
           num.intervals = num.intervals,
           eps = eps,
           verb = verb,
+          idm_version = idm_version,
           ncores = ncores
         )
       }
@@ -59,6 +61,7 @@ spn.multilabel <- function(data_train,
         num.intervals = num.intervals,
         eps = eps,
         verb = verb,
+        idm_version = idm_version,
         ncores = ncores
       )
       rs.multilabel <- cbind(rs.multilabel, rs)

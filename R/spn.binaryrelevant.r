@@ -10,6 +10,7 @@ spn.binary.relevance <- function(.idx.label,
                                  num.intervals = NULL,
                                  eps = 0.0,
                                  verb = FALSE,
+                                 idm_version = FALSE,
                                  ncores = 1) {
   .br.classify.data <- cbind(.features.train,
                              .labels.train[.idx.label],
@@ -36,7 +37,8 @@ spn.binary.relevance <- function(.idx.label,
     classcol = classcol,
     eps = eps,
     ncores = ncores,
-    verb = verb
+    verb = verb,
+    idm_version = idm_version
   )
   return(rs.multilabel)
 }
@@ -47,6 +49,7 @@ spn.binary.relevance.wrapper <- function(train_data,
                                          classcol,
                                          eps = 0.0,
                                          verb = FALSE,
+                                         idm_version = FALSE,
                                          ncores = 1) {
   #### Learning SPN structure model
   ptm <- proc.time()
@@ -73,6 +76,7 @@ spn.binary.relevance.wrapper <- function(train_data,
     classcol = classcol,
     eps = eps,
     verb = verb,
+    idm_version = idm_version,
     ncores = ncores
   )
   return(cur_res_select)

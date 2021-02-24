@@ -12,21 +12,22 @@ source("spn.multilabel.r")
 ################################################################
 # init parameters
 VERB <- TRUE
-NCORES <- 1
+NCORES <- 2
 NCORES_LEARN <- 1
 NUM_INTERVALS <- 5
+IDM_VERSION <- TRUE
 # init_data
 dataset <- "emotions"
 nb.labels <- 6
 max.resampling <- 50
 ROOT <- paste0("/Users/salmuz/Downloads/", dataset, "/")
-out_results <- "~/Downloads/mydata.csv"
+out_results <- "~/Downloads/mydata_idm.csv"
 
 # ROOT <- paste0("/home/lab/ycarranz/datasets_mlc/resampling/", dataset, "/")
 # out_results <- "/home/lab/ycarranz/results_mlc/results_emotions_cspn_brut_resampling_miss00.csv"
 
 # resampling parameters
-epsilons <- seq(0.02, 0.1, 0.02)
+epsilons <- seq(0.2, 0.5, 0.1)
 pcts <- seq(10, 90, 10)
 
 # loops
@@ -53,7 +54,8 @@ for (resampling in 1:max.resampling) {
         verb = VERB,
         ncores = NCORES,
         num.intervals = NUM_INTERVALS,
-        ncore.learn = NCORES_LEARN
+        ncore.learn = NCORES_LEARN,
+        idm_version = IDM_VERSION
       )
       rs <- cbind(pct, eps, resampling, rs)
       write.table(
@@ -68,3 +70,4 @@ for (resampling in 1:max.resampling) {
     }
   }
 }
+

@@ -39,7 +39,7 @@ spn.print.aux <- function(node, spaces='') {
         }
     }
     if(node$type == 4) { #'sum'
-        cat(paste(spaces,"sum scope",paste(node$scope,collapse=" "),"with n=",node$n," w=",paste(node$weight,collapse=" "),"\n"))
+        cat(paste(spaces,"sum scope",paste(node$scope,collapse=" "),"with n=",node$n," w=",paste(node$weight,collapse=" "), "total_w=", node$total_weight, "\n"))
         if(is.element("up", names(node)))
             cat(paste(spaces,"      up=",paste(node$up,collapse=" ")," low=",paste(node$low,collapse=" "),"\n"))
         for(nod in node$children) {
