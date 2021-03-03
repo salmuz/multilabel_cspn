@@ -24,8 +24,6 @@ spn.credal.predict <- function(spn,
         .packages = c("cluster"),
         .combine = rbind
       ) %dopar% {
-        if (i %% 20 == 1)
-          cat(paste(Sys.time(), ":::Predict", i - 1, "\n"))
         source("spn.maximality.r")
         spn.predict(
           spn = spn,

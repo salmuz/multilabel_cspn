@@ -26,17 +26,6 @@ spn.multilabel <- function(data_train,
   .labels.train <-
     .data[, ((ncol(.data) - nb.labels):ncol(.data))]
   rs.multilabel <- NULL
-  ################################################################
-  # removing variables not used for parallel processus
-  # save(list=ls(all.names = TRUE), file='before_session.RData')
-  # remove local variables
-  rm(list=Filter(exists,c(".data_test", ".data", ".data_train")))
-  # remove data set not used afterwards
-  rm(list=Filter(exists,c("data_train", "data_test")))
-  # garbage collection
-  gc()
-  # save(list=ls(all.names = TRUE), file='after_session.RData')
-  ################################################################
   if (ncore.learn > 1) {
     cl <- autoStopCluster(makeCluster(ncore.learn)) # outfile="" -> redirection stdout
     registerDoParallel(cl, cores = ncore.learn)
