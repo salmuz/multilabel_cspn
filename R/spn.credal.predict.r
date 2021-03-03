@@ -15,12 +15,8 @@ spn.credal.predict <- function(spn,
   if (nclass < 2)
     stop('class must be discrete')
   nr <- nrow(data)
-  ################################################################
-  # starting time inference
-  ptm <- proc.time()
-  ################################################################
   if (ncores > 1) {
-    cl <- makeCluster(ncores)
+    cl <- autoStopCluster(makeCluster(ncores))
     registerDoParallel(cl, cores = ncores)
     res <-
       foreach(
@@ -40,10 +36,14 @@ spn.credal.predict <- function(spn,
           idm_version = idm_version
         )
       }
-    stopCluster(cl)
+    gc() # stopCluster(cl) (wihout autoStopCluster)
   } else {
     res <- c()
     for (i in 1:nr) {
+      ################################################################
+      # starting time inference
+      ptm <- proc.time()
+      ################################################################
       res <- rbind(
         res,
         spn.predict(
@@ -55,15 +55,16 @@ spn.credal.predict <- function(spn,
           idm_version = idm_version
         )
       )
+      ################################################################
+      # stopping time inference
+      if (verb) {
+        time <- proc.time() - ptm
+        timing <- as.numeric(time['sys.self'] + time['user.self'])
+        cat(paste("Time of inference:::", timing, "\n"))
+      }
+      ################################################################
     }
   }
-  ################################################################
-  # stopping time inference
-  if (verb) {
-    time <- proc.time() - ptm
-    timing <- as.numeric(time['sys.self'] + time['user.self'])
-    cat(paste("Time of inference:::", timing, "\n"))
-  }
-  ################################################################
+  
   return(res)
 }

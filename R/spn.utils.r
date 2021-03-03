@@ -168,3 +168,18 @@ getDummies <- function(data) {
     }
     return(data)
 }
+
+# source: https://stackoverflow.com/questions/52190651/how-to-shut-down-an-open-r-cluster-connection-using-parallel
+autoStopCluster <- function(cl) {
+    stopifnot(inherits(cl, "cluster"))
+    env <- new.env()
+    env$cluster <- cl
+    attr(cl, "gcMe") <- env
+    reg.finalizer(env, function(e) {
+        message("Finalizing cluster ...")
+        message(capture.output(print(e$cluster)))
+        try(parallel::stopCluster(e$cluster), silent = FALSE)
+        message("Finalizing cluster ... done")
+    })
+    cl
+}
