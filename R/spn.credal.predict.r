@@ -16,25 +16,36 @@ spn.credal.predict <- function(spn,
     stop('class must be discrete')
   nr <- nrow(data)
   if (ncores > 1) {
-    cl <- autoStopCluster(makeCluster(ncores))
-    registerDoParallel(cl, cores = ncores)
+    cl <- makeForkCluster(ncores, outfile="br.credal.log")
+    registerDoParallel(cl)
     res <-
       foreach(
         i = 1:nr,
-        .packages = c("cluster"),
         .combine = rbind
       ) %dopar% {
-        source("spn.maximality.r")
-        spn.predict(
-          spn = spn,
-          data = as.numeric(data[i,]),
-          classcol = classcol,
-          verb = verb,
-          eps = eps,
-          idm_version = idm_version
-        )
+        rs_partial <- NULL
+        tryCatch({
+          source("spn.maximality.r", local = TRUE)
+          ptm <- proc.time()
+          rs_partial <- spn.predict(
+            spn = spn,
+            data = as.numeric(data[i,]),
+            classcol = classcol,
+            verb = verb,
+            eps = eps,
+            idm_version = idm_version
+          )
+          time <- proc.time() - ptm
+          timing <- as.numeric(time['sys.self'] + time['user.self'])
+          cat(paste("Time of inference:::", timing, "\n"))
+        }, error = function(e) {
+          message(paste0('A caused error', e))
+          stop("For further details go to br.creda.log file")
+        })
+        rs_partial
       }
-    gc() # stopCluster(cl) (wihout autoStopCluster)
+    #gc() #(wiht autoStopCluster)
+    stopCluster(cl)
   } else {
     res <- c()
     for (i in 1:nr) {

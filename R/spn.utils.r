@@ -114,6 +114,9 @@ discretization_eqfreq <- function(dataset, numint,
                                   ncols = ncol(dataset)) {
     numitem <- nrow(dataset)
     for (i in 1:ncols) {
+        # not discretization qualitative variables
+        if (is.factor(dataset[, i]))
+            next    
         floatdata <- as.numeric(dataset[, i])
         sort.idx <- sort(floatdata, index.return = TRUE)
         dataset <- dataset[sort.idx$ix, ]

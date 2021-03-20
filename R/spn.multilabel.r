@@ -22,34 +22,43 @@ spn.multilabel <- function(data_train,
   .data  <- rbind(.data_train, .data_test)
   
   .features.train  <-
-    .data[, -((ncol(.data) - nb.labels):ncol(.data))]
+    .data[,-((ncol(.data) - nb.labels):ncol(.data))]
   .labels.train <-
     .data[, ((ncol(.data) - nb.labels):ncol(.data))]
   rs.multilabel <- NULL
   if (ncore.learn > 1) {
-    cl <- autoStopCluster(makeCluster(ncore.learn)) # outfile="" -> redirection stdout
-    registerDoParallel(cl, cores = ncore.learn)
+    # outfile="" -> redirection stdout
+    cl <- autoStopCluster(makeCluster(ncore.learn, outfile="br.error.log")) 
+    registerDoParallel(cl)
     rs.multilabel <-
       foreach(
         i = 1:nb.labels,
         .packages = c("cluster"),
         .combine = cbind
       ) %dopar% {
-        source("spn.binaryrelevant.r")
-        cat(paste0(Sys.time(), ":::Label", .labels.train[i], "\n"))
-        spn.binary.relevance(
-          .idx.label = i,
-          .features.train = .features.train,
-          .labels.train = .labels.train,
-          nb.labels = nb.labels,
-          num.intervals = num.intervals,
-          eps = eps,
-          verb = verb,
-          idm_version = idm_version,
-          ncores = ncores
-        )
+        cat(paste0(Sys.time(), ":::Label:::", i, "\n"))
+        tryCatch({
+          source("spn.binaryrelevant.r", local = TRUE)
+          spn.binary.relevance(
+            .idx.label = i,
+            .features.train = .features.train,
+            .labels.train = .labels.train,
+            nb.labels = nb.labels,
+            num.intervals = num.intervals,
+            eps = eps,
+            verb = verb,
+            idm_version = idm_version,
+            ncores = ncores
+          )
+        }, error = function(e) {
+          message(paste0("Label ", i, ", A caused error learning step:", e))
+          stop("Error in learning step, verify br.error.log file, for further details.")
+        }, finally = {
+          message(paste0("Label ", i, " has finished corretly"))
+        })
       }
-    gc() # stopCluster(cl) (wihout autoStopCluster)
+    gc()
+    # stopCluster(cl) (wihout autoStopCluster)
   } else {
     for (i in 1:nb.labels) {
       rs <- spn.binary.relevance(

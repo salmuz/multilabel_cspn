@@ -9,7 +9,7 @@ spn.value.min <-
            evi,
            eps = 0,
            eps.gauss = 0,
-           use_memory = FALSE,
+           use_memory = TRUE,
            idm_version = FALSE) {
     ## quick check about the configuration
     if (sum(spn$ncat[evi$scope] * spn$ncat[evi$scope] < spn$ncat[evi$scope] *
