@@ -12,24 +12,34 @@ source("spn.multilabel.r")
 ################################################################
 # init parameters
 VERB <- TRUE
-NCORES <- 2
+NCORES <- 1
 NCORES_LEARN <- 1
-NUM_INTERVALS <- 5
-IDM_VERSION <- TRUE
+NUM_INTERVALS <- 6
 # init_data
-dataset <- "emotions"
-nb.labels <- 6
+dataset <- "medical"
+nb.labels <- 45
+# resampling number
 max.resampling <- 50
-ROOT <- paste0("/Users/salmuz/Downloads/", dataset, "/")
-out_results <- "~/Downloads/mydata_idm.csv"
-
-# ROOT <- paste0("/home/lab/ycarranz/datasets_mlc/resampling/", dataset, "/")
-# out_results <- "/home/lab/ycarranz/results_mlc/results_emotions_cspn_brut_resampling_miss00.csv"
+# root datasets training 
+ROOT <- paste0("/home/lab/ycarranz/datasets_mlc/resampling/", dataset, "/")
+# testing configuration
+# ROOT <- paste0("/Users/salmuz/Downloads/", dataset, "/")
+# out_results <- "~/Downloads/mydata_idm.csv"
 
 # resampling parameters
-epsilons <- seq(0.2, 0.5, 0.1)
+#args<-commandArgs(TRUE)
+#pct <- args[1]
+epsilons <- seq(0.1, 0.3, 0.1)
 pcts <- seq(10, 90, 10)
+# creation file by type cautious
+IDM_VERSION <- FALSE
+type <- ifelse(IDM_VERSION, "idm", "econt")
+out_results <- paste0(".../results_mlc/results_", data, 
+                      "_cspn_brut_resampling_", type, 
+                      "_", NUM_INTERVALS, "disc.csv")
 
+# logging 
+print(paste0("Version IDM?", IDM_VERSION, " -> ", out_results))
 # loops
 for (resampling in 1:max.resampling) {
   for (pct in pcts) {
