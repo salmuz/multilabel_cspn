@@ -10,33 +10,38 @@ library(stringr)
 library(optparse)
 source("spn.multilabel.r")
 ################################################################
-# init parameters
+# GLOBAL: init parameters
 VERB <- TRUE
 NCORES <- 1
 NCORES_LEARN <- 1
 NUM_INTERVALS <- 6
-# init_data
+IDM_VERSION <- FALSE
+ROOT <- "..." # ROOT path to output results and to get datasets
+
+# DATASET: init_data
 dataset <- "medical"
 nb.labels <- 45
-# resampling number
+
+# RESAMPLING: resampling number
 max.resampling <- 50
 # root datasets training 
-ROOT <- paste0("/home/lab/ycarranz/datasets_mlc/resampling/", dataset, "/")
-# testing configuration
-# ROOT <- paste0("/Users/salmuz/Downloads/", dataset, "/")
-# out_results <- "~/Downloads/mydata_idm.csv"
+ROOT_DATASET <- paste0(ROOT, "/datasets_mlc/resampling/", dataset, "/")
+# creation output-file by type cautious  
+type <- ifelse(IDM_VERSION, "idm", "econt")
+out_results <- paste0(
+  ROOT,
+  "/results_mlc/results_",
+  data,
+  "_cspn_brut_resampling_",
+  type,
+  "_",
+  NUM_INTERVALS,
+  "disc.csv"
+)
 
-# resampling parameters
-#args<-commandArgs(TRUE)
-#pct <- args[1]
+# imprecision/percentage parameters 
 epsilons <- seq(0.1, 0.3, 0.1)
 pcts <- seq(10, 90, 10)
-# creation file by type cautious
-IDM_VERSION <- FALSE
-type <- ifelse(IDM_VERSION, "idm", "econt")
-out_results <- paste0(".../results_mlc/results_", data, 
-                      "_cspn_brut_resampling_", type, 
-                      "_", NUM_INTERVALS, "disc.csv")
 
 # logging 
 print(paste0("Version IDM?", IDM_VERSION, " -> ", out_results))
@@ -49,8 +54,8 @@ for (resampling in 1:max.resampling) {
     cat(paste(Sys.time(), 'Test file', in_test, sep = ":::"), '\n')
     
     # data set
-    data_train <- read.arff(paste0(ROOT, in_train))
-    data_test <- read.arff(paste0(ROOT, in_test))
+    data_train <- read.arff(paste0(ROOT_DATASET, in_train))
+    data_test <- read.arff(paste0(ROOT_DATASET, in_test))
     
     for (eps in epsilons) {
       cat(paste(Sys.time(), 'Resampling', resampling, 

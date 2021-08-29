@@ -1,4 +1,5 @@
 source("spn.binaryrelevant.r")
+source("spn.utils.r")
 require("parallel")
 require("foreach")
 require("doParallel")
@@ -28,7 +29,8 @@ spn.multilabel <- function(data_train,
   rs.multilabel <- NULL
   if (ncore.learn > 1) {
     # outfile="" -> redirection stdout
-    cl <- autoStopCluster(makeCluster(ncore.learn, outfile="br.error.log")) 
+    cl <- autoStopCluster(makeCluster(ncore.learn,
+                                      outfile = "br.error.log"))
     registerDoParallel(cl)
     rs.multilabel <-
       foreach(
@@ -52,13 +54,14 @@ spn.multilabel <- function(data_train,
           )
         }, error = function(e) {
           message(paste0("Label ", i, ", A caused error learning step:", e))
-          stop("Error in learning step, verify br.error.log file, for further details.")
+          stop("Error in learning step, verify br.error.log file,
+               for further details.")
         }, finally = {
           message(paste0("Label ", i, " has finished corretly"))
         })
       }
     gc()
-    # stopCluster(cl) (wihout autoStopCluster)
+    # stopCluster(cl) (without autoStopCluster)
   } else {
     for (i in 1:nb.labels) {
       rs <- spn.binary.relevance(

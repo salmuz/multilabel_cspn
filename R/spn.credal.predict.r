@@ -16,7 +16,7 @@ spn.credal.predict <- function(spn,
     stop('class must be discrete')
   nr <- nrow(data)
   if (ncores > 1) {
-    cl <- makeForkCluster(ncores, outfile="br.credal.log")
+    cl <- makeForkCluster(ncores, outfile = "br.credal.log")
     registerDoParallel(cl)
     res <-
       foreach(
@@ -29,14 +29,15 @@ spn.credal.predict <- function(spn,
           ptm <- proc.time()
           rs_partial <- spn.predict(
             spn = spn,
-            data = as.numeric(data[i,]),
+            data = as.numeric(data[i, ]),
             classcol = classcol,
             verb = verb,
             eps = eps,
             idm_version = idm_version
           )
           time <- proc.time() - ptm
-          timing <- as.numeric(time['sys.self'] + time['user.self'])
+          timing <-
+            as.numeric(time['sys.self'] + time['user.self'])
           cat(paste("Time of inference:::", timing, "\n"))
         }, error = function(e) {
           message(paste0('A caused error', e))
@@ -44,7 +45,7 @@ spn.credal.predict <- function(spn,
         })
         rs_partial
       }
-    #gc() #(wiht autoStopCluster)
+    #gc() #(with autoStopCluster)
     stopCluster(cl)
   } else {
     res <- c()
@@ -74,6 +75,5 @@ spn.credal.predict <- function(spn,
       ################################################################
     }
   }
-  
   return(res)
 }
