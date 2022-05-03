@@ -61,11 +61,13 @@ If this material has been useful to you, please consider citing
 Yonatan Carlos Carranza Alarcón, Sébastien Destercke. "Skeptical binary inferences in multi-label problems with sets of probabilities"  
   
 ```  
-@inbook{ycarranza2021,  
- title= {Skeptical binary inferences in multi-label problems with sets of probabilities},
- author = {Yonatan Carlos Carranza Alarcón, Sébastien Destercke.}, 
- booktitle = {},
- doi = {...}, 
- editor = {...}, 
- year = {2021}}  
+@misc{https://doi.org/10.48550/arxiv.2205.00662,
+  doi = {10.48550/ARXIV.2205.00662},
+  url = {https://arxiv.org/abs/2205.00662},
+  author = {Alarcón, Yonatan Carlos Carranza and Destercke, Sébastien},
+  keywords = {Machine Learning (stat.ML), Artificial Intelligence (cs.AI), Machine Learning (cs.LG), Combinatorics (math.CO), FOS: Computer and information sciences, FOS: Computer and information sciences, FOS: Mathematics, FOS: Mathematics},
+  title = {Skeptical binary inferences in multi-label problems with sets of probabilities},
+  publisher = {arXiv},
+  year = {2022}
+} 
 ```  
